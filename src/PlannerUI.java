@@ -4,6 +4,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class PlannerUI extends JFrame {
+    private JLabel statsLabel;
     private ArrayList<Task> tasks = TaskManager.loadTasks();
     private JTextField taskField;
     private JTextField subjectField;
@@ -37,7 +38,8 @@ public class PlannerUI extends JFrame {
         inputPanel.add(addButton);
 
         add(inputPanel, BorderLayout.NORTH);
-
+        statsLabel = new JLabel("Total Tasks: 0 | Completed: 0");
+add(statsLabel, BorderLayout.WEST);
         // Table
         String[] columns = {"Task", "Subject", "Deadline", "Status"};
         tableModel = new DefaultTableModel(columns, 0);
@@ -70,6 +72,7 @@ public class PlannerUI extends JFrame {
         deleteButton.addActionListener(e -> deleteTask());
 
         setVisible(true);
+        updateStats();
     }
 
     private void addTask() {
@@ -96,6 +99,7 @@ public class PlannerUI extends JFrame {
     subjectField.setText("");
     deadlineField.setText("");
     TaskManager.saveTasks(tasks);
+    updateStats();
 }
 
     private void markComplete() {
@@ -106,6 +110,7 @@ public class PlannerUI extends JFrame {
         tableModel.setValueAt("Done", selectedRow, 3);
         TaskManager.saveTasks(tasks);
     }
+    updateStats();
 }
 
    private void deleteTask() {
@@ -116,5 +121,18 @@ public class PlannerUI extends JFrame {
         tableModel.removeRow(selectedRow);
         TaskManager.saveTasks(tasks);
     }
+    updateStats();
+}
+private void updateStats() {
+    int total = tasks.size();
+    int completed = 0;
+
+    for (Task t : tasks) {
+        if (t.getStatus().equals("Done")) {
+            completed++;
+        }
+    }
+
+    statsLabel.setText("Total Tasks: " + total + " | Completed: " + completed);
 }
 }
