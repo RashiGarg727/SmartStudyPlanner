@@ -4,6 +4,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class PlannerUI extends JFrame {
+    private JComboBox<String> priorityBox;
     private JLabel statsLabel;
     private ArrayList<Task> tasks = TaskManager.loadTasks();
     private JTextField taskField;
@@ -34,6 +35,10 @@ public class PlannerUI extends JFrame {
         deadlineField = new JTextField();
         inputPanel.add(deadlineField);
 
+        inputPanel.add(new JLabel("Priority:"));
+priorityBox = new JComboBox<>(new String[]{"High", "Medium", "Low"});
+inputPanel.add(priorityBox);
+
         JButton addButton = new JButton("Add Task");
         inputPanel.add(addButton);
 
@@ -41,7 +46,7 @@ public class PlannerUI extends JFrame {
         statsLabel = new JLabel("Total Tasks: 0 | Completed: 0");
 add(statsLabel, BorderLayout.WEST);
         // Table
-        String[] columns = {"Task", "Subject", "Deadline", "Status"};
+        String[] columns = {"Task", "Subject", "Deadline", "Priority", "Status"};
         tableModel = new DefaultTableModel(columns, 0);
         table = new JTable(tableModel);
         for (Task task : tasks) {
@@ -79,27 +84,30 @@ add(statsLabel, BorderLayout.WEST);
     String taskName = taskField.getText().trim();
     String subject = subjectField.getText().trim();
     String deadline = deadlineField.getText().trim();
+    String priority = priorityBox.getSelectedItem().toString();
 
     if (taskName.isEmpty() || subject.isEmpty() || deadline.isEmpty()) {
         JOptionPane.showMessageDialog(this, "Please fill all fields!");
         return;
     }
 
-    Task task = new Task(taskName, subject, deadline);
+    Task task = new Task(taskName, subject, deadline, priority);
     tasks.add(task);
 
     tableModel.addRow(new Object[]{
-            task.getName(),
-            task.getSubject(),
-            task.getDeadline(),
-            task.getStatus()
-    });
+        task.getName(),
+        task.getSubject(),
+        task.getDeadline(),
+        task.getPriority(),
+        task.getStatus()
+});
+
+    TaskManager.saveTasks(tasks);
+    updateStats();
 
     taskField.setText("");
     subjectField.setText("");
     deadlineField.setText("");
-    TaskManager.saveTasks(tasks);
-    updateStats();
 }
 
     private void markComplete() {

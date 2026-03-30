@@ -9,9 +9,10 @@ public class TaskManager {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
             for (Task task : tasks) {
                 writer.write(task.getName() + "," +
-                             task.getSubject() + "," +
-                             task.getDeadline() + "," +
-                             task.getStatus());
+             task.getSubject() + "," +
+             task.getDeadline() + "," +
+             task.getPriority() + "," +
+             task.getStatus());
                 writer.newLine();
             }
         } catch (IOException e) {
@@ -31,8 +32,16 @@ public class TaskManager {
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",");
 
-                Task task = new Task(data[0], data[1], data[2]);
-                if (data[3].equals("Done")) {
+if (data.length == 5) {
+    Task task = new Task(data[0], data[1], data[2], data[3]);
+    if (data[4].equals("Done")) {
+        task.markComplete();
+    }
+    tasks.add(task);
+}
+
+                Task task = new Task(data[0], data[1], data[2], data[3]);
+                if (data[4].equals("Done")) {
                     task.markComplete();
                 }
 
