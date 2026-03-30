@@ -64,18 +64,23 @@ public class PlannerUI extends JFrame {
     }
 
     private void addTask() {
-    String taskName = taskField.getText();
-    String subject = subjectField.getText();
-    String deadline = deadlineField.getText();
+    String taskName = taskField.getText().trim();
+    String subject = subjectField.getText().trim();
+    String deadline = deadlineField.getText().trim();
+
+    if (taskName.isEmpty() || subject.isEmpty() || deadline.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Please fill all fields!");
+        return;
+    }
 
     Task task = new Task(taskName, subject, deadline);
     tasks.add(task);
 
     tableModel.addRow(new Object[]{
-        task.getName(),
-        task.getSubject(),
-        task.getDeadline(),
-        task.getStatus()
+            task.getName(),
+            task.getSubject(),
+            task.getDeadline(),
+            task.getStatus()
     });
 
     taskField.setText("");
