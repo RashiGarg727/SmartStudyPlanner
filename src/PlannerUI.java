@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-
+import javax.swing.table.DefaultTableCellRenderer;
 public class PlannerUI extends JFrame {
     private JComboBox<String> priorityBox;
     private JLabel statsLabel;
@@ -49,6 +49,7 @@ add(statsLabel, BorderLayout.WEST);
         String[] columns = {"Task", "Subject", "Deadline", "Priority", "Status"};
         tableModel = new DefaultTableModel(columns, 0);
         table = new JTable(tableModel);
+        applyPriorityColors();
         for (Task task : tasks) {
     tableModel.addRow(new Object[]{
             task.getName(),
@@ -142,5 +143,31 @@ private void updateStats() {
     }
 
     statsLabel.setText("Total Tasks: " + total + " | Completed: " + completed);
+}
+private void applyPriorityColors() {
+    table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+        @Override
+        public java.awt.Component getTableCellRendererComponent(
+                JTable table, Object value, boolean isSelected,
+                boolean hasFocus, int row, int column) {
+
+            java.awt.Component cell = super.getTableCellRendererComponent(
+                    table, value, isSelected, hasFocus, row, column);
+
+            String priority = table.getValueAt(row, 3).toString();
+
+            if (!isSelected) {
+                if (priority.equals("High")) {
+                    cell.setBackground(new Color(255, 180, 180));
+                } else if (priority.equals("Medium")) {
+                    cell.setBackground(new Color(255, 220, 150));
+                } else {
+                    cell.setBackground(new Color(200, 255, 200));
+                }
+            }
+
+            return cell;
+        }
+    });
 }
 }
