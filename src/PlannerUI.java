@@ -4,7 +4,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class PlannerUI extends JFrame {
-    private ArrayList<Task> tasks = new ArrayList<>();
+    private ArrayList<Task> tasks = TaskManager.loadTasks();
     private JTextField taskField;
     private JTextField subjectField;
     private JTextField deadlineField;
@@ -12,6 +12,7 @@ public class PlannerUI extends JFrame {
     private DefaultTableModel tableModel;
 
     public PlannerUI() {
+        
         setTitle("Smart Study Planner");
         setSize(700, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -41,6 +42,14 @@ public class PlannerUI extends JFrame {
         String[] columns = {"Task", "Subject", "Deadline", "Status"};
         tableModel = new DefaultTableModel(columns, 0);
         table = new JTable(tableModel);
+        for (Task task : tasks) {
+    tableModel.addRow(new Object[]{
+            task.getName(),
+            task.getSubject(),
+            task.getDeadline(),
+            task.getStatus()
+    });
+}
 
         add(new JScrollPane(table), BorderLayout.CENTER);
 
@@ -86,6 +95,7 @@ public class PlannerUI extends JFrame {
     taskField.setText("");
     subjectField.setText("");
     deadlineField.setText("");
+    TaskManager.saveTasks(tasks);
 }
 
     private void markComplete() {
@@ -94,13 +104,17 @@ public class PlannerUI extends JFrame {
     if (selectedRow != -1) {
         tasks.get(selectedRow).markComplete();
         tableModel.setValueAt("Done", selectedRow, 3);
+        TaskManager.saveTasks(tasks);
     }
 }
 
-    private void deleteTask() {
-        int selectedRow = table.getSelectedRow();
-        if (selectedRow != -1) {
-            tableModel.removeRow(selectedRow);
-        }
+   private void deleteTask() {
+    int selectedRow = table.getSelectedRow();
+
+    if (selectedRow != -1) {
+        tasks.remove(selectedRow);
+        tableModel.removeRow(selectedRow);
+        TaskManager.saveTasks(tasks);
     }
+}
 }
